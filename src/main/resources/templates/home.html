@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragments.html::head"></head>
+
+<body class="bg-light d-flex flex-column align-items-center justify-content-center">
+    <div class="jumbotron d-flex flex-column align-items-center w-50">
+        <h1 class="pb-4">Simple Posts Board</h1>
+        <div id="btn-group">
+            <div sec:authorize="!isAuthenticated()" class="d-flex flex-column justify-content-around" style="width:200px">
+                <a class="btn btn-lg btn-secondary" th:href="@{/login}" role="button">로그인</a>
+                <a class="btn btn-lg btn-secondary" th:href="@{/accounts/sign-up}" role="button">회원가입</a>
+                <a class="btn btn-lg btn-success" th:href="@{#}" role="button">전체 글</a>
+            </div>
+            <div sec:authorize="isAuthenticated()" class="d-flex flex-column justify-content-around" style="width:200px">
+                <p><span th:text="${account.getNickname()}"></span>님 환영합니다. </p>
+                <form th:action="@{/logout}" method="post">
+                    <button class="btn btn-lg btn-secondary w-100" type="submit">로그아웃</button>
+                </form>
+                <a class="btn btn-lg btn-danger" th:href="@{#}" role="button">차단 목록</a>
+                <a class="btn btn-lg btn-success" th:href="@{#}" role="button">전체 글</a>
+            </div>
+        </div>
+    </div>
+</body>
+
+<div th:replace="fragments.html::bootstrap-js"></div>
+</html>
