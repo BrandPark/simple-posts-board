@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html::head"></head>
+
+<body class="bg-light d-flex flex-column align-items-center justify-content-center">
+<h1 class="pb-4"><a th:href="@{/}" class="text-decoration-none text-dark">Simple Posts Board</a></h1>
+<div class="jumbotron w-50">
+
+    <h2 class="pb-4">전체 글 목록</h2>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th scope="col" style="width:75px;">No.</th>
+                <th scope="col">제목</th>
+                <th scope="col" style="width:100px">작성자</th>
+                <th scope="col" style="width:75px">조회수</th>
+                <th scope="col" style="width:100px">시간</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <a class="btn btn-secondary" th:href="@{/}" role="button">취소</a>
+    <button id="btn-save" class="btn btn-success float-right">등록</button>
+</div>
+</body>
+
+<div th:replace="fragments.html::bootstrap-js"></div>
+<script>
+    $(function () {
+        listPosts.loadPosts();
+    });
+    let listPosts = {
+        init: function () {
+
+        },
+        loadPosts: function () {
+            let postsList = [];
+
+            $.ajax({
+                url: "/api/v1/posts",
+                method: "get"
+            }).done(function (data) {
+                console.log(data);
+            }).fail(function (e) {
+                alert("글 목록을 조회하는데 실패했습니다.");
+            });
+        },
+        _createCol: function(data) {
+            return "<td>" + data + "</td>";
+        }
+    }
+
+</script>
+</html>

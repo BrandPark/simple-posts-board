@@ -1,13 +1,13 @@
 package com.brandpark.simplepostsboard;
 
-import com.brandpark.simplepostsboard.modules.accounts.Accounts;
 import com.brandpark.simplepostsboard.modules.accounts.AccountRepository;
+import com.brandpark.simplepostsboard.modules.accounts.Accounts;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles("test")
+@Profile("test")
 @Component
 public class AccountFactory {
     @Autowired AccountRepository accountRepository;

@@ -1,5 +1,6 @@
 package com.brandpark.simplepostsboard.modules.accounts;
 
+import com.brandpark.simplepostsboard.modules.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -8,7 +9,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Getter
 @Entity
-public class Accounts {
+public class Accounts extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "accounts_id")

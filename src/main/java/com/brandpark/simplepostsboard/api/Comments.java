@@ -1,5 +1,6 @@
 package com.brandpark.simplepostsboard.api;
 
+import com.brandpark.simplepostsboard.modules.BaseTimeEntity;
 import com.brandpark.simplepostsboard.modules.accounts.Accounts;
 import lombok.Getter;
 
@@ -7,7 +8,7 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-public class Comments {
+public class Comments extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comments_id")

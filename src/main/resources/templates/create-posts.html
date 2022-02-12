@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html::head"></head>
+
+<body class="bg-light d-flex flex-column align-items-center justify-content-center">
+<h1 class="pb-4"><a th:href="@{/}" class="text-decoration-none text-dark">Simple Posts Board</a></h1>
+<div class="jumbotron w-50">
+
+    <h2 class="pb-4">글 쓰기</h2>
+    <div class="form-group">
+        <label for="title">제목</label>
+        <input type="text" class="form-control" id="title" maxlength="100">
+        <small class="form-text text-muted">
+            최대 100자 까지 입력가능합니다.
+        </small>
+    </div>
+    <div class="form-group">
+        <label for="content">내용</label>
+        <textarea class="form-control" id="content" rows="10" style="resize:none" maxlength="255"></textarea>
+        <small class="form-text text-muted">
+            최대 255자 까지 입력가능합니다.
+        </small>
+    </div>
+    <a class="btn btn-secondary" th:href="@{/}" role="button">취소</a>
+    <button id="btn-save" class="btn btn-success float-right">등록</button>
+</div>
+</body>
+
+<div th:replace="fragments.html::bootstrap-js"></div>
+<script>
+    $(function () {
+        createPosts.init();
+    });
+    let createPosts = {
+        init: function () {
+            let _this = this;
+            $('#btn-save').on("click", function () {
+                _this.save();
+            });
+        },
+        save: function () {
+            let data = {
+                title: $('#title').val(),
+                content: $('#content').val()
+            };
+
+            $.ajax({
+                url: "/api/v1/posts",
+                method: "post",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data)
+            }).done(function () {
+                alert("글이 등록되었습니다.");
+                window.location.href = "/";
+            }).fail(function (e) {
+                alert("글 저장에 실패했습니다.");
+            });
+        }
+    }
+</script>
+</html>
