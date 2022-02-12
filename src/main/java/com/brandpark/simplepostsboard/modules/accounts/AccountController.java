@@ -1,8 +1,8 @@
 package com.brandpark.simplepostsboard.modules.accounts;
 
 import com.brandpark.simplepostsboard.infra.config.SessionAccounts;
+import com.brandpark.simplepostsboard.modules.accounts.form.SignUpForm;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
@@ -23,13 +23,15 @@ public class AccountController {
     public String showSignupView(Model model) {
 
         model.addAttribute("signUpForm", new SignUpForm());
+
         return "sign-up";
     }
 
     @PostMapping("/sign-up")
-    public String signUp(@Valid SignUpForm form, Errors errors) {
+    public String signUp(@Valid SignUpForm form, Errors errors, Model model) {
 
         if (errors.hasErrors()) {
+            model.addAttribute("signUpForm", form);
             return "sign-up";
         }
 

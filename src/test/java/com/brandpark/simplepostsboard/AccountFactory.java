@@ -1,9 +1,9 @@
 package com.brandpark.simplepostsboard;
 
-import com.brandpark.simplepostsboard.api.Accounts;
+import com.brandpark.simplepostsboard.modules.accounts.Accounts;
 import com.brandpark.simplepostsboard.modules.accounts.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -11,8 +11,10 @@ import org.springframework.test.context.ActiveProfiles;
 @Component
 public class AccountFactory {
     @Autowired AccountRepository accountRepository;
+    @Autowired PasswordEncoder passwordEncoder;
 
     public Accounts createAndPersistAccount(String nickname, String password) {
-        return accountRepository.save(Accounts.createAccount(nickname, password));
+        String encodedPw = passwordEncoder.encode(password);
+        return accountRepository.save(Accounts.createAccount(nickname, encodedPw));
     }
 }

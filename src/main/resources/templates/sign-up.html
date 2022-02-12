@@ -10,7 +10,8 @@
     <form th:action="@{/accounts/sign-up}" th:object="${signUpForm}" method="post" style="width:300px">
         <div class="form-group">
             <label for="nickname">닉네임</label>
-            <input id="nickname" type="text" name="nickname" class="form-control" aria-describedby="usernameHelp" autocomplete="off">
+            <input id="nickname" type="text" name="nickname" class="form-control" th:field="*{nickname}"
+                   aria-describedby="usernameHelp" autocomplete="off">
             <small id="usernameHelp" class="form-text text-muted">
                 사용 할 닉네임을 입력해주세요.<br>
                 <strong>공백 없이 문자와 숫자로만 3자 이상 20자 이내</strong>로 가능합니다.

@@ -1,7 +1,7 @@
 package com.brandpark.simplepostsboard;
 
-import com.brandpark.simplepostsboard.api.Accounts;
 import com.brandpark.simplepostsboard.modules.accounts.AccountRepository;
+import com.brandpark.simplepostsboard.modules.accounts.Accounts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;

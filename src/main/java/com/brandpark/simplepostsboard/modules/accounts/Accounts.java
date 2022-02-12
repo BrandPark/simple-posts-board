@@ -1,4 +1,4 @@
-package com.brandpark.simplepostsboard.api;
+package com.brandpark.simplepostsboard.modules.accounts;
 
 import lombok.*;
 

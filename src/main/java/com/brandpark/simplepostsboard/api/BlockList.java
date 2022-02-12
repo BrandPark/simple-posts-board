@@ -1,5 +1,6 @@
 package com.brandpark.simplepostsboard.api;
 
+import com.brandpark.simplepostsboard.modules.accounts.Accounts;
 import lombok.Getter;
 
 import javax.persistence.*;

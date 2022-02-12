@@ -1,6 +1,5 @@
 package com.brandpark.simplepostsboard.modules.accounts;
 
-import com.brandpark.simplepostsboard.api.Accounts;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 

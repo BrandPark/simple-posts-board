@@ -3,8 +3,6 @@ package com.brandpark.simplepostsboard.modules;
 import com.brandpark.simplepostsboard.infra.config.SessionAccounts;
 import com.brandpark.simplepostsboard.modules.accounts.LoginAccounts;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

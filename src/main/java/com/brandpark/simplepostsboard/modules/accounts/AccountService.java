@@ -1,7 +1,7 @@
 package com.brandpark.simplepostsboard.modules.accounts;
 
-import com.brandpark.simplepostsboard.api.Accounts;
 import com.brandpark.simplepostsboard.infra.config.SessionAccounts;
+import com.brandpark.simplepostsboard.modules.accounts.form.SignUpForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

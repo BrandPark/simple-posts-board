@@ -1,4 +1,4 @@
-package com.brandpark.simplepostsboard.modules.accounts;
+package com.brandpark.simplepostsboard.modules.accounts.form;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
