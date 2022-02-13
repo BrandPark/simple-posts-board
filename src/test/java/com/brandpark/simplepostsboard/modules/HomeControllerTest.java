@@ -30,7 +30,7 @@ class HomeControllerTest {
 
     @DisplayName("메인 페이지 로딩 - 로그인 안 했을 때")
     @Test
-    public void MainPage_When_NotAuthenticated() throws Exception {
+    public void MainView_When_NotAuthenticated() throws Exception {
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeDoesNotExist("account"))
@@ -40,7 +40,7 @@ class HomeControllerTest {
     @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     @DisplayName("메인 페이지 로딩 - 로그인 했을 때")
     @Test
-    public void MainPage_When_Authenticated() throws Exception {
+    public void MainView_When_Authenticated() throws Exception {
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("account"))

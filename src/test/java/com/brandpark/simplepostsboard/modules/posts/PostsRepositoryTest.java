@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,7 +51,7 @@ class PostsRepositoryTest {
             AssertUtil.assertObject(a);
         }
 
-        assertThat(result.get(0).getCreatedDate()).isAfter(result.get(result.size() - 1).getCreatedDate());
+        assertThat(result.get(0).getCreatedDate()).isAfterOrEqualTo(result.get(result.size() - 1).getCreatedDate());
     }
 
     @DisplayName("모든 글과 작성자들을 조회 순으로 가져오기")
@@ -86,5 +87,41 @@ class PostsRepositoryTest {
         }
 
         assertThat(result.get(0).getViewCount()).isGreaterThan(result.get(result.size() - 1).getViewCount());
+    }
+
+    @DisplayName("PostsId로 Posts와 Accounts 같이 조회하기")
+    @Test
+    public void FindPostsWithAccountsById() throws Exception {
+
+        // given
+        Accounts writer = accountFactory.createAndPersistAccount("작성자", "1q2w3e4r");
+        Long postsId = postsFactory.createAndPersistPosts("제목", "내용", writer).getId();
+
+        // when
+        Optional<Posts> result = postsRepository.findPostsWithAccountById(postsId);
+
+        // then
+        assertThat(result).isNotEmpty();
+    }
+
+    @DisplayName("PostsId로 Posts의 viewCount 증가시키기")
+    @Test
+    public void IncreasePostsViewCountById() throws Exception {
+
+        // given
+        Accounts writer = accountFactory.createAndPersistAccount("작성자", "1q2w3e4r");
+        Posts savedPosts = postsFactory.createAndPersistPosts("제목", "내용", writer);
+        Long postsId = savedPosts.getId();
+
+        assertThat(savedPosts.getViewCount()).isEqualTo(0);
+
+        // when
+        int affectedCount = postsRepository.increasePostsViewCountById(postsId);
+
+        // then
+        assertThat(affectedCount).isEqualTo(1);
+
+        Posts updatedPosts = postsRepository.findById(postsId).get();
+        assertThat(updatedPosts.getViewCount()).isEqualTo(1);
     }
 }

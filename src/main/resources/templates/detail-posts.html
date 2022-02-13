@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments.html::head"></head>
+
+<body class="bg-light d-flex flex-column align-items-center justify-content-center">
+
+<div th:replace="fragments.html::title"></div>
+
+<div class="jumbotron w-50">
+
+    <div class="d-flex justify-content-between mb-2">
+        <h2 class="pb-4">글 세부사항</h2>
+
+        <div class="d-flex flex-column">
+            <h4><strong>제목: </strong><span id="title"></span></h4>
+            <span><strong>작성자: </strong><span id="writerNickname"></span></span>
+            <span><strong>작성 날짜: </strong> <span id="createdDate"></span></span>
+            <span><strong>조회수: </strong> <span id="viewCount"></span></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <textarea class="form-control" id="content" rows="10" style="resize:none" maxlength="255" disabled></textarea>
+    </div>
+    <a class="btn btn-secondary mb-4" th:href="@{/posts/list}" role="button">목록</a>
+</div>
+</body>
+
+<div th:replace="fragments.html::bootstrap-js"></div>
+<script>
+    $(function () {
+        detailPosts.loadPosts();
+
+    });
+    let detailPosts = {
+        loadPosts: function () {
+
+            $.ajax({
+                url: "/api/v1" + window.location.pathname,
+                method: "get",
+            }).done(function (data) {
+                console.log(data);
+                $("#postsId").text(data["id"]);
+                $("#title").text(data["title"]);
+                $("#content").text(data["content"]);
+                $("#writerNickname").text(data["writerNickname"]);
+                $("#viewCount").text(data["viewCount"]);
+                $("#createdDate").text(data["createdDate"]);
+            }).fail(function (e) {
+                alert("글을 로드하는데 실패했습니다.");
+
+            });
+        }
+    }
+</script>
+</html>

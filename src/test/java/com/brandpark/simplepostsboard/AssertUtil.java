@@ -1,6 +1,7 @@
 package com.brandpark.simplepostsboard;
 
 
+import com.brandpark.simplepostsboard.api.posts.dto.PostsResponse;
 import com.brandpark.simplepostsboard.modules.accounts.Accounts;
 import com.brandpark.simplepostsboard.modules.posts.Posts;
 
@@ -23,5 +24,15 @@ public abstract class AssertUtil {
         assertThat(accounts.getPassword()).isNotNull();
         assertThat(accounts.getCreatedDate()).isNotNull();
         assertThat(accounts.getModifiedDate()).isNotNull();
+    }
+
+    public static void assertObject(PostsResponse obj) {
+        assertThat(obj.getId()).isNotNull();
+        assertThat(obj.getTitle()).isNotNull();
+        assertThat(obj.getWriterId()).isNotNull();
+        assertThat(obj.getWriterNickname()).isNotNull();
+        assertThat(obj.getViewCount()).isNotNull();
+        assertThat(obj.getCreatedDate()).isNotNull();
+        assertThat(obj.getModifiedDate()).isNotNull();
     }
 }

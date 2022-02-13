@@ -24,4 +24,15 @@ public class PostsService {
 
         return postsRepository.save(req.toEntity(writer)).getId();
     }
+
+    @Transactional
+    public Posts viewPosts(Long postsId) {
+
+        postsRepository.increasePostsViewCountById(postsId);
+
+        Posts findPosts = postsRepository.findPostsWithAccountById(postsId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+
+        return findPosts;
+    }
 }

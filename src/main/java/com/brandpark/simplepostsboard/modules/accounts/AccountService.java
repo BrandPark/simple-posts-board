@@ -25,9 +25,6 @@ public class AccountService implements UserDetailsService {
 
     @Transactional
     public SessionAccounts signUp(SignUpForm form) {
-        if (accountRepository.existsByNickname(form.getNickname())) {
-            throw new IllegalArgumentException("이미 계정이 존재합니다.");
-        }
 
         form.setPassword(pwEncoder.encode(form.getPassword()));
 

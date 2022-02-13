@@ -17,4 +17,9 @@ public class PostsController {
     public String showPostsListView() {
         return "list-posts";
     }
+
+    @GetMapping("/{postsId}")
+    public String showPostsDetailView() {
+        return "detail-posts";
+    }
 }

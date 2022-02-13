@@ -1,53 +1,116 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+                xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head th:replace="fragments.html::head"></head>
 
 <body class="bg-light d-flex flex-column align-items-center justify-content-center">
-<h1 class="pb-4"><a th:href="@{/}" class="text-decoration-none text-dark">Simple Posts Board</a></h1>
+<div th:replace="fragments.html::title"></div>
 <div class="jumbotron w-50">
+    <div>
+        <h2 class="pb-4">전체 글 목록 (<span id="item-count"></span>)</h2>
 
-    <h2 class="pb-4">전체 글 목록</h2>
-    <table class="table table-sm">
+        <div class="form-group d-flex justify-content-between">
+            <div>
+                <label for="order-base" class="col-form-label pr-3">정렬 기준:</label>
+
+                <select class="col-form-label" id="order-base">
+                    <option th:each="orderBase: ${T(com.brandpark.simplepostsboard.api.OrderBase).values()}"
+                            th:value="${orderBase.name()}"
+                            th:text="${orderBase.getName()}"></option>
+                </select>
+            </div>
+        </div>
+
+    </div>
+    <table class="table table-sm table-bordered">
         <thead>
             <tr>
-                <th scope="col" style="width:75px;">No.</th>
-                <th scope="col">제목</th>
-                <th scope="col" style="width:100px">작성자</th>
-                <th scope="col" style="width:75px">조회수</th>
-                <th scope="col" style="width:100px">시간</th>
+                <th scope="col" class="text-center" style="width:50px;">No.</th>
+                <th scope="col" class="text-center">제목</th>
+                <th hidden>Writer ID</th>
+                <th scope="col" class="text-center" style="width:100px">작성자</th>
+                <th scope="col" class="text-center" style="width:75px">조회수</th>
+                <th scope="col" class="text-center" style="width:150px">시간</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="tbody">
         </tbody>
     </table>
-    <a class="btn btn-secondary" th:href="@{/}" role="button">취소</a>
-    <button id="btn-save" class="btn btn-success float-right">등록</button>
+    <a class="btn btn-secondary" th:href="@{/}" role="button">홈으로</a>
+    <a th:href="@{/posts/create}" sec:authorize="isAuthenticated()" id="btn-write-posts" class="btn btn-success float-right" role="button">글 쓰기</a>
 </div>
 </body>
 
 <div th:replace="fragments.html::bootstrap-js"></div>
+<script th:replace="fragments.html::ajax-csrf-header"></script>
 <script>
     $(function () {
+        listPosts.init();
         listPosts.loadPosts();
     });
     let listPosts = {
         init: function () {
+            let _this = this;
 
+            $("#order-base").on("change", function () {
+                _this.loadPosts();
+            });
+
+            $("#tbody").on('click', "tr", function (e) {
+                let $row = $(e.target).closest("tr");
+                let postsId = parseInt($row.find("td:eq(0)").text());
+                if(postsId === NaN) {
+                    alert("게시물의 번호가 잘못되었습니다.");
+                }
+
+                window.location.href = "/posts/" + postsId
+            });
         },
+
         loadPosts: function () {
-            let postsList = [];
+            let _this = this;
 
             $.ajax({
-                url: "/api/v1/posts",
-                method: "get"
+                url: "/api/v1/posts?orderBase=" + $("#order-base").val(),
+                method: "get",
             }).done(function (data) {
-                console.log(data);
+                _this._dataBatch(data);
             }).fail(function (e) {
                 alert("글 목록을 조회하는데 실패했습니다.");
             });
         },
-        _createCol: function(data) {
-            return "<td>" + data + "</td>";
+
+        _dataBatch: function(data) {
+
+            $("#tbody").text("");
+
+            $("#item-count").text(data["itemCount"]);
+
+            let rows = this._createRows(data["itemList"]);
+            $("#tbody").append(rows);
+        },
+
+        _createRows: function(list) {
+
+            let rows = "";
+            for (let i = 0; i < list.length; i++) {
+                rows += "<tr role='button'>" + this._createCols(list[i]) + "</tr>";
+            }
+
+            return rows;
+        },
+
+        _createCols: function(row) {
+            let col = "";
+            col += "<td class='text-right'>" + row["id"] + "</td>";
+            col += "<td>" + row["title"] + "</td>";
+            col += "<td class='writer-id' hidden>" + row["writerId"] + "</td>";
+            col += "<td>" + row["writerNickname"] + "</td>";
+            col += "<td class='text-right'>" + row["viewCount"] + "</td>";
+            col += "<td class='small text-right'>" + row["createdDate"] + "</td>";
+
+            return col;
         }
     }
 

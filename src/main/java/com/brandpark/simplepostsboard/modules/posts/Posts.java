@@ -28,7 +28,7 @@ public class Posts extends BaseTimeEntity {
     @JoinColumn(name = "accounts_id", nullable = false)
     private Accounts accounts;
 
-    @Column
+    @Column(name = "view_count")
     private long viewCount;
 
     public static Posts createPosts(String title, String content, Accounts accounts) {

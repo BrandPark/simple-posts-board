@@ -2,6 +2,7 @@ package com.brandpark.simplepostsboard.api.posts;
 
 import com.brandpark.simplepostsboard.api.OrderBase;
 import com.brandpark.simplepostsboard.api.posts.dto.PostsListResponse;
+import com.brandpark.simplepostsboard.api.posts.dto.PostsResponse;
 import com.brandpark.simplepostsboard.api.posts.dto.SavePostsRequest;
 import com.brandpark.simplepostsboard.infra.config.SessionAccounts;
 import com.brandpark.simplepostsboard.modules.accounts.LoginAccounts;
@@ -33,10 +34,18 @@ public class PostsApiController {
     }
 
     @GetMapping
-    public PostsListResponse getPostsList(@RequestParam OrderBase orderBase) {
+    public PostsListResponse getAllPosts(@RequestParam(value = "orderBase") OrderBase orderBase) {
 
         List<Posts> allPosts = postsRepository.findAllPostsWithAccountsOrderBy(orderBase);
 
         return new PostsListResponse(allPosts);
+    }
+
+    @GetMapping("/{postsId}")
+    public PostsResponse getPosts(@PathVariable Long postsId) {
+
+        Posts findPosts = postsService.viewPosts(postsId);
+
+        return new PostsResponse(findPosts);
     }
 }
