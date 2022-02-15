@@ -1,6 +1,6 @@
 package com.brandpark.simplepostsboard.modules.posts;
 
-import com.brandpark.simplepostsboard.api.OrderBase;
+import com.brandpark.simplepostsboard.modules.OrderBase;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface PostsRepository extends JpaRepository<Posts, Long>, CustomPostsRepository {
 
     @Override
-    List<Posts> findAllPostsWithAccountsOrderBy(OrderBase orderBase);
+    List<Posts> findAllOrderedPostsWithAccounts(OrderBase orderBase);
 
     @Query("SELECT p FROM Posts p JOIN FETCH p.accounts WHERE p.id = :postsId")
     Optional<Posts> findPostsWithAccountById(@Param("postsId") Long postsId);

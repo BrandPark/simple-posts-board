@@ -1,6 +1,6 @@
 package com.brandpark.simplepostsboard.modules.posts;
 
-import com.brandpark.simplepostsboard.api.OrderBase;
+import com.brandpark.simplepostsboard.modules.OrderBase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,12 +14,13 @@ public class CustomPostsRepositoryImpl implements CustomPostsRepository {
     private final EntityManager em;
 
     @Override
-    public List<Posts> findAllPostsWithAccountsOrderBy(OrderBase orderBase) {
+    public List<Posts> findAllOrderedPostsWithAccounts(OrderBase orderBase) {
 
-        StringBuilder query = new StringBuilder("SELECT p FROM Posts p JOIN FETCH p.accounts ORDER BY");
-        query.append(" p.").append(orderBase.getValue());
-        query.append(" ").append(orderBase.getDir());
+        String query = String.format(
+                "SELECT p FROM Posts p " +
+                        "JOIN FETCH p.accounts " +
+                        "ORDER BY p.%s %s", orderBase.getValue(), orderBase.getDir());
 
-        return em.createQuery(query.toString(), Posts.class).getResultList();
+        return em.createQuery(query, Posts.class).getResultList();
     }
 }

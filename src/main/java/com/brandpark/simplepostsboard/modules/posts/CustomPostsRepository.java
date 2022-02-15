@@ -1,9 +1,9 @@
 package com.brandpark.simplepostsboard.modules.posts;
 
-import com.brandpark.simplepostsboard.api.OrderBase;
+import com.brandpark.simplepostsboard.modules.OrderBase;
 
 import java.util.List;
 
 public interface CustomPostsRepository {
-    List<Posts> findAllPostsWithAccountsOrderBy(OrderBase orderBase);
+    List<Posts> findAllOrderedPostsWithAccounts(OrderBase orderBase);
 }

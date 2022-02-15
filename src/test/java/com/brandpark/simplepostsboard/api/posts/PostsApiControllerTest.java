@@ -4,10 +4,10 @@ import com.brandpark.simplepostsboard.AccountFactory;
 import com.brandpark.simplepostsboard.AssertUtil;
 import com.brandpark.simplepostsboard.MockMvcTest;
 import com.brandpark.simplepostsboard.PostsFactory;
-import com.brandpark.simplepostsboard.api.OrderBase;
+import com.brandpark.simplepostsboard.modules.OrderBase;
 import com.brandpark.simplepostsboard.api.posts.dto.PostsListResponse;
 import com.brandpark.simplepostsboard.api.posts.dto.PostsResponse;
-import com.brandpark.simplepostsboard.api.posts.dto.SavePostsRequest;
+import com.brandpark.simplepostsboard.api.posts.dto.PostsSaveRequest;
 import com.brandpark.simplepostsboard.modules.accounts.Accounts;
 import com.brandpark.simplepostsboard.modules.posts.Posts;
 import com.brandpark.simplepostsboard.modules.posts.PostsRepository;
@@ -48,7 +48,7 @@ class PostsApiControllerTest {
     public void RegisterPosts_Fail_When_Unauthenticated() throws Exception {
 
         // given
-        SavePostsRequest req = new SavePostsRequest();
+        PostsSaveRequest req = new PostsSaveRequest();
         req.setTitle("제목");
         req.setContent("내용");
 
@@ -67,7 +67,7 @@ class PostsApiControllerTest {
     public void RegisterPosts_Fail_When_Authenticated() throws Exception {
 
         // given
-        SavePostsRequest req = new SavePostsRequest();
+        PostsSaveRequest req = new PostsSaveRequest();
         req.setTitle("제목");
         req.setContent("내용");
 
@@ -108,7 +108,7 @@ class PostsApiControllerTest {
 
                     List<PostsResponse> findAllPosts = responseObj.getItemList();
                     for (PostsResponse p : findAllPosts) {
-                        AssertUtil.assertObject(p);
+                        AssertUtil.assertObjectPropIsNotNull(p);
                     }
 
                     assertThat(findAllPosts.get(0).getCreatedDate())
@@ -144,7 +144,7 @@ class PostsApiControllerTest {
 
                     List<PostsResponse> findAllPosts = responseObj.getItemList();
                     for (PostsResponse p : findAllPosts) {
-                        AssertUtil.assertObject(p);
+                        AssertUtil.assertObjectPropIsNotNull(p);
                     }
 
                     assertThat(findAllPosts.get(0).getViewCount())
@@ -172,8 +172,8 @@ class PostsApiControllerTest {
 
                     PostsResponse responseObj = objectMapper.readValue(json, PostsResponse.class);
 
-                    assertThat(savedPosts.getId()).isEqualTo(responseObj.getId());
-                    AssertUtil.assertObject(responseObj);
+                    assertThat(savedPosts.getId()).isEqualTo(responseObj.getPostsId());
+                    AssertUtil.assertObjectPropIsNotNull(responseObj);
                     assertThat(responseObj.getViewCount()).isEqualTo(1);
                 });
 

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Data
 public class PostsResponse {
-    private Long id;
+    private Long postsId;
     private String title;
     private String content;
     private Long writerId;
@@ -26,7 +26,7 @@ public class PostsResponse {
     private LocalDateTime modifiedDate;
 
     public PostsResponse(Posts posts) {
-        id = posts.getId();
+        postsId = posts.getId();
         title = posts.getTitle();
         content = posts.getContent();
         writerId = posts.getAccounts().getId();

@@ -4,7 +4,7 @@ import com.brandpark.simplepostsboard.AccountFactory;
 import com.brandpark.simplepostsboard.AssertUtil;
 import com.brandpark.simplepostsboard.PostsFactory;
 import com.brandpark.simplepostsboard.RepoTest;
-import com.brandpark.simplepostsboard.api.OrderBase;
+import com.brandpark.simplepostsboard.modules.OrderBase;
 import com.brandpark.simplepostsboard.modules.accounts.Accounts;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ class PostsRepositoryTest {
         em.clear();
 
         // when
-        List<Posts> result = postsRepository.findAllPostsWithAccountsOrderBy(order);
+        List<Posts> result = postsRepository.findAllOrderedPostsWithAccounts(order);
 
         // then
         assertThat(result.size()).isEqualTo(allPostsCount);
@@ -47,8 +47,8 @@ class PostsRepositoryTest {
             Posts p = result.get(i);
             Accounts a = p.getAccounts();
 
-            AssertUtil.assertObject(p);
-            AssertUtil.assertObject(a);
+            AssertUtil.assertObjectPropIsNotNull(p);
+            AssertUtil.assertObjectPropIsNotNull(a);
         }
 
         assertThat(result.get(0).getCreatedDate()).isAfterOrEqualTo(result.get(result.size() - 1).getCreatedDate());
@@ -74,7 +74,7 @@ class PostsRepositoryTest {
         em.clear();
 
         // when
-        List<Posts> result = postsRepository.findAllPostsWithAccountsOrderBy(order);
+        List<Posts> result = postsRepository.findAllOrderedPostsWithAccounts(order);
 
         // then
         assertThat(result.size()).isEqualTo(allPostsCount);
@@ -82,8 +82,8 @@ class PostsRepositoryTest {
             Posts p = result.get(i);
             Accounts a = p.getAccounts();
 
-            AssertUtil.assertObject(p);
-            AssertUtil.assertObject(a);
+            AssertUtil.assertObjectPropIsNotNull(p);
+            AssertUtil.assertObjectPropIsNotNull(a);
         }
 
         assertThat(result.get(0).getViewCount()).isGreaterThan(result.get(result.size() - 1).getViewCount());

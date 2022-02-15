@@ -7,7 +7,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @EnableWebSecurity
 @Configuration
@@ -18,7 +17,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .mvcMatchers("/", "/accounts/sign-up").permitAll()
-                .mvcMatchers(HttpMethod.GET, "/posts/list").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/posts/create").authenticated()
+                .mvcMatchers(HttpMethod.GET, "/posts/**").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/api/v1/**").permitAll()
                 .anyRequest().authenticated();
 
@@ -27,8 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout().logoutSuccessUrl("/").deleteCookies("JSESSIONID");
 
-        http.csrf().ignoringAntMatchers("/api/v1/**")
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+        http.csrf().ignoringAntMatchers("/api/v1/**");
     }
 
     @Override

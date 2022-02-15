@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotEmpty;
 
 @Data
-public class SavePostsRequest {
+public class PostsSaveRequest {
 
     @NotEmpty
     @Length(max = 100)

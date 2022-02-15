@@ -1,7 +1,7 @@
 body {
-    height: 100vh;
-
+    padding-top: 100px;
 }
+
 #btn-group .btn {
     margin-top: 15px;
 }

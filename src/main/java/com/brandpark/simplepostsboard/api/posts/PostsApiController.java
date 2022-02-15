@@ -1,9 +1,9 @@
 package com.brandpark.simplepostsboard.api.posts;
 
-import com.brandpark.simplepostsboard.api.OrderBase;
+import com.brandpark.simplepostsboard.modules.OrderBase;
 import com.brandpark.simplepostsboard.api.posts.dto.PostsListResponse;
 import com.brandpark.simplepostsboard.api.posts.dto.PostsResponse;
-import com.brandpark.simplepostsboard.api.posts.dto.SavePostsRequest;
+import com.brandpark.simplepostsboard.api.posts.dto.PostsSaveRequest;
 import com.brandpark.simplepostsboard.infra.config.SessionAccounts;
 import com.brandpark.simplepostsboard.modules.accounts.LoginAccounts;
 import com.brandpark.simplepostsboard.modules.posts.Posts;
@@ -24,7 +24,7 @@ public class PostsApiController {
     private final PostsRepository postsRepository;
 
     @PostMapping
-    public Long registerPosts(@LoginAccounts SessionAccounts accounts, @RequestBody @Valid SavePostsRequest req) {
+    public Long registerPosts(@LoginAccounts SessionAccounts accounts, @RequestBody @Valid PostsSaveRequest req) {
 
         if (accounts == null) {
             throw new IllegalStateException("인증되지 않은 사용자입니다.");
@@ -36,7 +36,7 @@ public class PostsApiController {
     @GetMapping
     public PostsListResponse getAllPosts(@RequestParam(value = "orderBase") OrderBase orderBase) {
 
-        List<Posts> allPosts = postsRepository.findAllPostsWithAccountsOrderBy(orderBase);
+        List<Posts> allPosts = postsRepository.findAllOrderedPostsWithAccounts(orderBase);
 
         return new PostsListResponse(allPosts);
     }

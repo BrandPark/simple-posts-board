@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head th:replace="fragments.html::head"></head>
 
 <body class="bg-light d-flex flex-column align-items-center justify-content-center">
 
 <div th:replace="fragments.html::title"></div>
 
-<div class="jumbotron w-50">
+<div class="jumbotron w-50 pt-4 pb-2">
 
     <div class="d-flex justify-content-between mb-2">
         <h2 class="pb-4">글 세부사항</h2>
@@ -24,13 +26,37 @@
     </div>
     <a class="btn btn-secondary mb-4" th:href="@{/posts/list}" role="button">목록</a>
 </div>
+
+<div class="jumbotron w-50 pt-3">
+    <h4 class="pb-4">전체 댓글(<span id="comments-count"></span>)</h4>
+    <div class="border-bottom border-secondary"></div>
+
+    <div id="comments-list">
+    </div>
+
+    <div sec:authorize="isAuthenticated()" class="pt-2 pl-3 pr-3">
+        <div class="d-flex align-items-center">
+            <textarea class="form-control" id="comments-content" rows="3" style="resize:none" maxlength="100"></textarea>
+            <div style="width: 100px" class="pl-3">
+                <button class="btn btn-primary" id="btn-save-comments">등록</button>
+            </div>
+        </div>
+        <small class="form-text text-muted">
+            최대 100자 까지 입력가능합니다.
+        </small>
+    </div>
+    <div sec:authorize="!isAuthenticated()" class="d-flex justify-content-center align-items-center pt-2">
+        <strong><a th:href="@{/login}" class="text-primary">로그인</a>을 하신 후 댓글을 작성할 수 있습니다. </strong>
+    </div>
+</div>
 </body>
 
 <div th:replace="fragments.html::bootstrap-js"></div>
 <script>
     $(function () {
         detailPosts.loadPosts();
-
+        comments.init();
+        comments.loadComments();
     });
     let detailPosts = {
         loadPosts: function () {
@@ -39,7 +65,6 @@
                 url: "/api/v1" + window.location.pathname,
                 method: "get",
             }).done(function (data) {
-                console.log(data);
                 $("#postsId").text(data["id"]);
                 $("#title").text(data["title"]);
                 $("#content").text(data["content"]);
@@ -48,9 +73,87 @@
                 $("#createdDate").text(data["createdDate"]);
             }).fail(function (e) {
                 alert("글을 로드하는데 실패했습니다.");
-
             });
         }
+    };
+
+    let comments = {
+
+        init: function () {
+            let _this = this;
+
+            $("#btn-save-comments").on("click", function () {
+                _this.saveComments();
+            });
+        },
+        saveComments: function () {
+            let _this = this;
+            let data = {
+                content: $("#comments-content").val()
+            };
+
+            $.ajax({
+                url: "/api/v1" + window.location.pathname + "/comments",
+                method: "post",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify(data)
+            }).done(function () {
+                alert("댓글이 등록되었습니다.");
+                _this.loadComments();
+                $("#comments-content").val("");
+            }).fail(function (e) {
+                alert("댓글 등록에 실패하였습니다.");
+            });
+        },
+        loadComments: function () {
+            let _this = this;
+
+            $.ajax({
+                url: "/api/v1" + window.location.pathname + "/comments",
+                method: "get",
+            }).done(function (data) {
+                _this._dataBatch(data);
+
+            }).fail(function (e) {
+                alert("댓글들을 로드하는데 실패했습니다.");
+            });
+        },
+        _dataBatch: function (data) {
+            $('#comments-list').text("");
+            $("#comments-count").text(data["itemCount"]);
+
+            let commentDivList = this._createCommentDivList(data["itemList"]);
+            $('#comments-list').append(commentDivList);
+        },
+        _createCommentDivList: function (list) {
+
+            let divList = "";
+
+            for (let i = 0; i < list.length; i++) {
+                let commentObj = list[i];
+                let commentsId = commentObj["id"];
+                let content = commentObj["content"];
+                let writerId = commentObj["writerId"];
+                let writerNickname = commentObj["writerNickname"];
+                let createdDate = commentObj["createdDate"];
+
+                let div = `<div class="d-flex border-bottom border-secondary pt-2 pb-2">
+                                <div class="d-flex flex-column w-25 border-right">
+                                    <span class="pb-2 font-weight-bold" writer-id="${writerId}">${writerNickname}</span>
+                                    <small class="text-muted">${createdDate}</small>
+                                </div>
+                                <div class="w-75 pl-2">
+                                    ${content}
+                                </div>
+                            </div>`;
+
+                divList += div;
+            }
+
+            return divList;
+        }
     }
+
 </script>
 </html>
