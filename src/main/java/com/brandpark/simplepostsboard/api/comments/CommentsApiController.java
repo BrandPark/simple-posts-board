@@ -21,8 +21,15 @@ public class CommentsApiController {
     private final CommentsService commentsService;
 
     @GetMapping
-    public CommentsListResponse getAllCommentsInPosts(@PathVariable Long postsId) {
-        List<Comments> allComments = commentsRepository.findAllByPostsId(postsId);
+    public CommentsListResponse getAllCommentsInPosts(@LoginAccounts SessionAccounts loginAccounts, @PathVariable Long postsId) {
+
+        List<Comments> allComments = null;
+
+        if (loginAccounts == null) {
+            allComments = commentsRepository.findAllByPostsId(postsId);
+        } else {
+            allComments = commentsRepository.findAllNotBlockedCommentsByPostsId(loginAccounts.getId(), postsId);
+        }
 
         return new CommentsListResponse(allComments);
     }

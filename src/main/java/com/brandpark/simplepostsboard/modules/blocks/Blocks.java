@@ -26,7 +26,7 @@ public class Blocks extends BaseTimeEntity {
     private Accounts toAccounts;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "block_state", nullable = false)
     private BlockState blockState;
 
     public static Blocks createBlockRelation(Accounts from, Accounts to) {

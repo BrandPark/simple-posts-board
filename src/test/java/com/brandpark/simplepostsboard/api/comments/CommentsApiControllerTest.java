@@ -1,11 +1,11 @@
 package com.brandpark.simplepostsboard.api.comments;
 
 import com.brandpark.simplepostsboard.*;
-import com.brandpark.simplepostsboard.modules.OrderBase;
 import com.brandpark.simplepostsboard.api.comments.dto.CommentsListResponse;
 import com.brandpark.simplepostsboard.api.comments.dto.CommentsResponse;
 import com.brandpark.simplepostsboard.api.comments.dto.CommentsSaveRequest;
 import com.brandpark.simplepostsboard.modules.accounts.Accounts;
+import com.brandpark.simplepostsboard.modules.blocks.BlockState;
 import com.brandpark.simplepostsboard.modules.commnets.Comments;
 import com.brandpark.simplepostsboard.modules.commnets.CommentsRepository;
 import com.brandpark.simplepostsboard.modules.posts.Posts;
@@ -35,17 +35,19 @@ class CommentsApiControllerTest {
     @Autowired CommentsFactory commentsFactory;
     @Autowired ObjectMapper objectMapper;
     @Autowired CommentsRepository commentsRepository;
+    @Autowired BlocksFactory blocksFactory;
+    Accounts loginAccounts;
 
     @BeforeEach
     public void setUp() {
-        accountFactory.createAndPersistAccount("user", "1q2w3e4r");
+        loginAccounts = accountFactory.createAndPersistAccount("user", "1q2w3e4r");
     }
 
     // TODO: 모든 댓글 조회 실패의 경우 에러 핸들러를 작성하여 처리 후 테스트 코드 작성
 
-    @DisplayName("게시글에 등록된 모든 댓글들 조회하기 - 성공")
+    @DisplayName("게시글에 등록된 모든 댓글들 조회하기 - 성공(로그인하지 않은 경우)")
     @Test
-    public void FindAllComments_Success() throws Exception {
+    public void FindAllComments_Success_When_Unauthenticated() throws Exception {
     
         // given
         Accounts postsWriter = accountFactory.createAndPersistAccount("글 작성자", "1q2w3e4r");
@@ -56,14 +58,45 @@ class CommentsApiControllerTest {
         commentsFactory.createAndPersistCommentsList("댓글", commentsWriter, posts, allCommentsCount);
 
         // when, then
-        mockMvc.perform(get("/api/v1/posts/" + posts.getId() + "/comments")
-                        .param("orderBase", OrderBase.DATE_DESC.toString()))
+        mockMvc.perform(get("/api/v1/posts/" + posts.getId() + "/comments"))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
                     String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
 
                     CommentsListResponse response = objectMapper.readValue(json, CommentsListResponse.class);
                     assertThat(response.getItemCount()).isEqualTo(allCommentsCount);
+
+                    for (CommentsResponse co : response.getItemList()) {
+                        AssertUtil.assertObjectPropIsNotNull(co);
+                    }
+                });
+    }
+
+    @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @DisplayName("차단한 사람을 제외하고 게시글에 등록된 모든 댓글들 조회하기 - 성공(로그인한 경우)")
+    @Test
+    public void FindAllComments_ExcludeBlocked_Success_When_Authenticated() throws Exception {
+
+        // given
+        Accounts postsWriter = accountFactory.createAndPersistAccount("글 작성자", "1q2w3e4r");
+        Posts posts = postsFactory.createAndPersistPosts("게시글", "내용", postsWriter);
+
+        Accounts commentsWriter = accountFactory.createAndPersistAccount("댓글 작성자", "1q2w3e4r");
+        int notBlockedCommentsCount = 10;
+        commentsFactory.createAndPersistCommentsList("댓글", commentsWriter, posts, notBlockedCommentsCount);
+
+        Accounts blockedAccounts = accountFactory.createAndPersistAccount("차단 당한 사람", "1q2w3e4r");
+        commentsFactory.createAndPersistComments("차단한 사람의 댓글", blockedAccounts, posts);
+        blocksFactory.createAndPersistRelation(loginAccounts, blockedAccounts, BlockState.BLOCKED);
+
+        // when, then
+        mockMvc.perform(get("/api/v1/posts/" + posts.getId() + "/comments"))
+                .andExpect(status().isOk())
+                .andExpect(result -> {
+                    String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+                    CommentsListResponse response = objectMapper.readValue(json, CommentsListResponse.class);
+                    assertThat(response.getItemCount()).isEqualTo(notBlockedCommentsCount);
 
                     for (CommentsResponse co : response.getItemList()) {
                         AssertUtil.assertObjectPropIsNotNull(co);

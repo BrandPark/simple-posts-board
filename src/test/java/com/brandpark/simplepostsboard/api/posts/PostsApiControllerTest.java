@@ -1,14 +1,12 @@
 package com.brandpark.simplepostsboard.api.posts;
 
-import com.brandpark.simplepostsboard.AccountFactory;
-import com.brandpark.simplepostsboard.AssertUtil;
-import com.brandpark.simplepostsboard.MockMvcTest;
-import com.brandpark.simplepostsboard.PostsFactory;
+import com.brandpark.simplepostsboard.*;
 import com.brandpark.simplepostsboard.modules.OrderBase;
 import com.brandpark.simplepostsboard.api.posts.dto.PostsListResponse;
 import com.brandpark.simplepostsboard.api.posts.dto.PostsResponse;
 import com.brandpark.simplepostsboard.api.posts.dto.PostsSaveRequest;
 import com.brandpark.simplepostsboard.modules.accounts.Accounts;
+import com.brandpark.simplepostsboard.modules.blocks.BlockState;
 import com.brandpark.simplepostsboard.modules.posts.Posts;
 import com.brandpark.simplepostsboard.modules.posts.PostsRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,10 +35,12 @@ class PostsApiControllerTest {
     @Autowired AccountFactory accountFactory;
     @Autowired PostsRepository postsRepository;
     @Autowired PostsFactory postsFactory;
+    @Autowired BlocksFactory blocksFactory;
+    Accounts loginUser;
 
     @BeforeEach
     public void setUp() {
-        accountFactory.createAndPersistAccount("user", "1q2w3e4r");
+        loginUser = accountFactory.createAndPersistAccount("user", "1q2w3e4r");
     }
 
     @DisplayName("글 등록하기 - 실패(인증되지 않은 요청)")
@@ -86,9 +86,9 @@ class PostsApiControllerTest {
         // TODO: JWT 도입 후 withUserDetails가 아니라 토큰을 넣는 상황을 테스트 해야합니다.
     }
 
-    @DisplayName("전체 글 목록 조회하기 - 성공(최신순 조회)")
+    @DisplayName("전체 글 목록 조회하기 - 성공(최신순 조회, 로그인하지 않은 상태)")
     @Test
-    public void GetAllPosts_Success_When_OrderBy_CreatedDateDesc() throws Exception {
+    public void GetAllOrderByCreatedDateDescPosts_Success_When_Unauthenticated() throws Exception {
 
         // given
         Accounts writer = accountFactory.createAndPersistAccount("writer", "1q2w3e4r");
@@ -118,9 +118,9 @@ class PostsApiControllerTest {
         // then
     }
 
-    @DisplayName("전체 글 목록 조회하기 - 성공(조회수순 조회)")
+    @DisplayName("전체 글 목록 조회하기 - 성공(조회수순 조회, 로그인하지 않은 상태)")
     @Test
-    public void GetAllPosts_Success_When_OrderBy_ViewCountDesc() throws Exception {
+    public void GetAllOrderByViewCountDescPosts_Success_When_Unauthenticated() throws Exception {
 
         // given
         Accounts writer = accountFactory.createAndPersistAccount("writer", "1q2w3e4r");
@@ -152,6 +152,80 @@ class PostsApiControllerTest {
                 });
 
         // then
+    }
+
+    @WithUserDetails(value="user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @DisplayName("전체 글 목록 조회하기 - 성공(차단자 제외하고 최신순 조회, 로그인한 상태)")
+    @Test
+    public void GetAllOrderByCreatedDateDescPosts_ExcludeBlocked_Success_When_Authenticated() throws Exception {
+
+        // given
+        Accounts writer = accountFactory.createAndPersistAccount("writer", "1q2w3e4r");
+
+        List<Posts> notBlockedPosts = postsFactory.createAndPersistPostsList("제목", "내용", writer, 10);
+
+        Accounts blockedWriter = accountFactory.createAndPersistAccount("차단할 사용자", "1q2w3e4r");
+        postsFactory.createAndPersistPosts("차단한 사용자의 게시글", "내용", blockedWriter);
+        blocksFactory.createAndPersistRelation(loginUser, blockedWriter, BlockState.BLOCKED);
+
+        // when, then
+        mockMvc.perform(get("/api/v1/posts")
+                        .param("orderBase", OrderBase.DATE_DESC.toString()))
+                .andExpect(status().isOk())
+                .andExpect(result -> {
+                    String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+                    PostsListResponse responseObj = objectMapper.readValue(json, PostsListResponse.class);
+
+                    assertThat(responseObj.getItemCount()).isEqualTo(notBlockedPosts.size());
+
+                    List<PostsResponse> findAllPosts = responseObj.getItemList();
+                    for (PostsResponse p : findAllPosts) {
+                        AssertUtil.assertObjectPropIsNotNull(p);
+                    }
+
+                    assertThat(findAllPosts.get(0).getCreatedDate())
+                            .isAfterOrEqualTo(findAllPosts.get(notBlockedPosts.size() - 1).getCreatedDate());
+                });
+    }
+
+    @WithUserDetails(value="user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @DisplayName("전체 글 목록 조회하기 - 성공(차단자 제외하고 조회수순 조회, 로그인한 상태)")
+    @Test
+    public void GetAllOrderByViewCountDescPosts_ExcludeBlocked_Success_When_Authenticated() throws Exception {
+
+        // given
+        Accounts writer = accountFactory.createAndPersistAccount("writer", "1q2w3e4r");
+
+        int notBlockedPostsCount = 10;
+        for (int i = 0; i < notBlockedPostsCount; i++) {
+            int viewCount = notBlockedPostsCount - i;  // 최신 글일 수록 viewCount를 낮게 준다.
+            postsFactory.createAndPersistPosts("제목" + i, "내용" + i, writer, viewCount);
+        }
+
+        Accounts blockedWriter = accountFactory.createAndPersistAccount("차단할 사용자", "1q2w3e4r");
+        postsFactory.createAndPersistPosts("차단한 사용자의 게시글", "내용", blockedWriter);
+        blocksFactory.createAndPersistRelation(loginUser, blockedWriter, BlockState.BLOCKED);
+
+        // when
+        mockMvc.perform(get("/api/v1/posts")
+                        .param("orderBase", OrderBase.VIEW_DESC.toString()))
+                .andExpect(status().isOk())
+                .andExpect(result -> {
+                    String json = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+                    PostsListResponse responseObj = objectMapper.readValue(json, PostsListResponse.class);
+
+                    assertThat(responseObj.getItemCount()).isEqualTo(notBlockedPostsCount);
+
+                    List<PostsResponse> findAllPosts = responseObj.getItemList();
+                    for (PostsResponse p : findAllPosts) {
+                        AssertUtil.assertObjectPropIsNotNull(p);
+                    }
+
+                    assertThat(findAllPosts.get(0).getViewCount())
+                            .isGreaterThan(findAllPosts.get(notBlockedPostsCount - 1).getViewCount());
+                });
     }
 
     @DisplayName("단일 글 세부 내용 조회 및 조회수 증가 - 성공")

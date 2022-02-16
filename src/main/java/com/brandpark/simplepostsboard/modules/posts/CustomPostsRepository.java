@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface CustomPostsRepository {
     List<Posts> findAllOrderedPostsWithAccounts(OrderBase orderBase);
+
+    List<Posts> findAllOrderedPostsWithAccountsExcludeBlockedAccountsPosts(Long loginAccountsId, OrderBase orderBase);
 }

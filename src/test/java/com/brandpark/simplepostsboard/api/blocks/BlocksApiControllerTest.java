@@ -158,7 +158,7 @@ class BlocksApiControllerTest {
         }
 
         // when, then
-        mockMvc.perform(get("/api/v1/accounts/" + loginUser.getId() + "blocks"))
+        mockMvc.perform(get("/api/v1/accounts/" + loginUser.getId() + "/blocks"))
                 .andExpect(status().isOk())
                 .andExpect(result -> {
 

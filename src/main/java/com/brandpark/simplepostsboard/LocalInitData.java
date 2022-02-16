@@ -18,9 +18,8 @@ public class LocalInitData {
 
     @PostConstruct
     public void init() {
-        String nickname = "admin";
-        String password = "1q2w3e4r";
-
-        accountRepository.save(Accounts.createAccount(nickname, passwordEncoder.encode(password)));
+        accountRepository.save(Accounts.createAccount("admin", passwordEncoder.encode("1q2w3e4r")));
+        accountRepository.save(Accounts.createAccount("user1", passwordEncoder.encode("1q2w3e4r")));
+        accountRepository.save(Accounts.createAccount("user2", passwordEncoder.encode("1q2w3e4r")));
     }
 }

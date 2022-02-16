@@ -34,9 +34,15 @@ public class PostsApiController {
     }
 
     @GetMapping
-    public PostsListResponse getAllPosts(@RequestParam(value = "orderBase") OrderBase orderBase) {
+    public PostsListResponse getAllPosts(@LoginAccounts SessionAccounts loginAccounts, @RequestParam(value = "orderBase") OrderBase orderBase) {
 
-        List<Posts> allPosts = postsRepository.findAllOrderedPostsWithAccounts(orderBase);
+        List<Posts> allPosts = null;
+
+        if (loginAccounts == null) {
+            allPosts = postsRepository.findAllOrderedPostsWithAccounts(orderBase);
+        } else {
+            allPosts = postsRepository.findAllOrderedPostsWithAccountsExcludeBlockedAccountsPosts(loginAccounts.getId(), orderBase);
+        }
 
         return new PostsListResponse(allPosts);
     }
