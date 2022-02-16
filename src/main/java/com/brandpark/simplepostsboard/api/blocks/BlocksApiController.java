@@ -3,10 +3,14 @@ package com.brandpark.simplepostsboard.api.blocks;
 import com.brandpark.simplepostsboard.api.blocks.dto.BlockedAccountsListResponse;
 import com.brandpark.simplepostsboard.infra.config.SessionAccounts;
 import com.brandpark.simplepostsboard.modules.accounts.LoginAccounts;
+import com.brandpark.simplepostsboard.modules.blocks.BlockState;
+import com.brandpark.simplepostsboard.modules.blocks.Blocks;
 import com.brandpark.simplepostsboard.modules.blocks.BlocksRepository;
 import com.brandpark.simplepostsboard.modules.blocks.BlocksService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
@@ -28,8 +32,11 @@ public class BlocksApiController {
         return blocksService.createUnblockRelation(loginAccounts, toAccountsId);
     }
 
-    @GetMapping("/blocks")
+    @GetMapping("/accounts/{accountsId}/blocks")
     public BlockedAccountsListResponse getAllBlockedAccountsList(@LoginAccounts SessionAccounts loginAccounts) {
-        return null;
+
+        List<Blocks> allBlockRelation = blocksRepository.findAllByFromAccountsIdAndBlockState(loginAccounts.getId(), BlockState.BLOCKED);
+
+        return new BlockedAccountsListResponse(allBlockRelation, loginAccounts);
     }
 }

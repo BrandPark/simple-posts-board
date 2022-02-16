@@ -11,5 +11,5 @@ public interface BlocksRepository extends JpaRepository<Blocks, Long> {
 
     Optional<Blocks> findByFromAccountsIdAndToAccountsId(Long fromAccountsId, Long toAccountsId);
 
-    List<Blocks> findAllByFromAccountsIdAndBlockStateBlocked(Long fromAccountsId);
+    List<Blocks> findAllByFromAccountsIdAndBlockState(Long fromAccountsId, BlockState state);
 }

@@ -15,7 +15,7 @@
                 <label for="order-base" class="col-form-label pr-3">정렬 기준:</label>
 
                 <select class="col-form-label" id="order-base">
-                    <option th:each="orderBase: ${T(com.brandpark.simplepostsboard.api.OrderBase).values()}"
+                    <option th:each="orderBase: ${orderBaseValues}"
                             th:value="${orderBase.name()}"
                             th:text="${orderBase.getName()}"></option>
                 </select>
@@ -37,6 +37,7 @@
         <tbody id="tbody">
         </tbody>
     </table>
+
     <a class="btn btn-secondary" th:href="@{/}" role="button">홈으로</a>
     <a th:href="@{/posts/create}" sec:authorize="isAuthenticated()" id="btn-write-posts" class="btn btn-success float-right" role="button">글 쓰기</a>
 </div>
@@ -57,15 +58,45 @@
                 _this.loadPosts();
             });
 
-            $("#tbody").on('click', "tr", function (e) {
+            $("#tbody").on('click', "tr .title", function (e) {
                 let $row = $(e.target).closest("tr");
                 let postsId = parseInt($row.find("td:eq(0)").text());
-                if(postsId === NaN) {
-                    alert("게시물의 번호가 잘못되었습니다.");
-                }
 
-                window.location.href = "/posts/" + postsId
+                _this.viewDetail(postsId);
             });
+
+            $("#tbody").on('click', ".btn-block", function (e) {
+                let $row = $(e.target).closest("tr");
+                let toBlockedAccountsId = parseInt($row.find("td.writer-id").text());
+
+                mainJs.block(toBlockedAccountsId);
+            });
+        },
+
+        block: function (toBlockedAccountsId) {
+
+            if (toBlockedAccountsId === NaN) {
+                alert("차단할 계정의 ID가 잘못되었습니다.");
+            }
+
+            $.ajax({
+                url: "/api/v1/accounts/" + toBlockedAccountsId + "/block",
+                method: "post",
+            }).done(function () {
+                alert("차단되었습니다");
+                window.location.href = "";
+            }).fail(function (e) {
+                alert("차단하는데 실패했습니다.");
+            });
+        },
+
+        viewDetail: function (postsId) {
+
+            if(postsId === NaN) {
+                alert("게시물의 번호가 잘못되었습니다.");
+            }
+
+            window.location.href = "/posts/" + postsId
         },
 
         loadPosts: function () {
@@ -94,19 +125,36 @@
         _createRows: function(list) {
 
             let rows = "";
+
             for (let i = 0; i < list.length; i++) {
-                rows += "<tr role='button'>" + this._createCols(list[i]) + "</tr>";
+                rows += "<tr>" + this._createCols(list[i]) + "</tr>";
             }
 
             return rows;
         },
 
         _createCols: function(row) {
+
+            let loginUserName = "[[${#authentication.getName()}]]";
+
             let col = "";
-            col += "<td class='text-right'>" + row["id"] + "</td>";
-            col += "<td>" + row["title"] + "</td>";
+
+            col += "<td class='text-right'>" + row["postsId"] + "</td>";
+            col += "<td><a class='text-primary title' role='button'>" + row["title"] + "</a></td>";
             col += "<td class='writer-id' hidden>" + row["writerId"] + "</td>";
-            col += "<td>" + row["writerNickname"] + "</td>";
+
+            if (loginUserName !== 'anonymousUser' && loginUserName !== row["writerNickname"]) {
+                col +=
+                    `<td>
+                        <a class='text-primary' role='button' data-toggle='dropdown' accounts-id="${row['writerId']}">${row["writerNickname"]}</a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item btn-block" role="button">차단하기</a>
+                        </div>
+                     </td>`;
+            } else {
+                col += `<td>${row["writerNickname"]}</td>`;
+            }
+
             col += "<td class='text-right'>" + row["viewCount"] + "</td>";
             col += "<td class='small text-right'>" + row["createdDate"] + "</td>";
 

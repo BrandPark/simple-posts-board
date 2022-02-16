@@ -19,6 +19,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/", "/accounts/sign-up").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/posts/create").authenticated()
                 .mvcMatchers(HttpMethod.GET, "/posts/**").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/accounts/*/blocks").authenticated()
+                .mvcMatchers(HttpMethod.GET, "/api/v1/blocks").authenticated()
                 .mvcMatchers(HttpMethod.GET, "/api/v1/**").permitAll()
                 .anyRequest().authenticated();
 

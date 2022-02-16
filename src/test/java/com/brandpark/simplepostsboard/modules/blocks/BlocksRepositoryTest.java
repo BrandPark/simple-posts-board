@@ -1,6 +1,7 @@
 package com.brandpark.simplepostsboard.modules.blocks;
 
 import com.brandpark.simplepostsboard.AccountFactory;
+import com.brandpark.simplepostsboard.AssertUtil;
 import com.brandpark.simplepostsboard.BlocksFactory;
 import com.brandpark.simplepostsboard.RepoTest;
 import com.brandpark.simplepostsboard.modules.accounts.Accounts;
@@ -60,9 +61,13 @@ class BlocksRepositoryTest {
         }
 
         // when
-        List<Blocks> result = blocksRepository.findAllByFromAccountsIdAndBlockStateBlocked(from.getId());
+        List<Blocks> result = blocksRepository.findAllByFromAccountsIdAndBlockState(from.getId(), BlockState.BLOCKED);
 
         // then
         assertThat(result.size()).isEqualTo(blockedCount);
+        for (Blocks b : result) {
+            AssertUtil.assertObjectPropIsNotNull(b);
+            assertThat(b.getBlockState()).isEqualTo(BlockState.BLOCKED);
+        }
     }
 }

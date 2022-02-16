@@ -1,6 +1,7 @@
 package com.brandpark.simplepostsboard;
 
 
+import com.brandpark.simplepostsboard.api.blocks.dto.BlockedAccountsResponse;
 import com.brandpark.simplepostsboard.api.comments.dto.CommentsResponse;
 import com.brandpark.simplepostsboard.api.posts.dto.PostsResponse;
 import com.brandpark.simplepostsboard.modules.accounts.Accounts;
@@ -62,6 +63,14 @@ public abstract class AssertUtil {
         assertThat(obj.getFromAccounts()).isNotNull();
         assertThat(obj.getToAccounts()).isNotNull();
         assertThat(obj.getBlockState()).isNotNull();
+        assertThat(obj.getCreatedDate()).isNotNull();
+        assertThat(obj.getModifiedDate()).isNotNull();
+    }
+
+    public static void assertObjectPropIsNotNull(BlockedAccountsResponse obj) {
+        assertThat(obj.getBlocksId()).isNotNull();
+        assertThat(obj.getBlockedAccountsId()).isNotNull();
+        assertThat(obj.getBlockedAccountsNickname()).isNotNull();
         assertThat(obj.getCreatedDate()).isNotNull();
         assertThat(obj.getModifiedDate()).isNotNull();
     }

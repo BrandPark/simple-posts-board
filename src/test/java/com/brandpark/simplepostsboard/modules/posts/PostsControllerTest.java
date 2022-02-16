@@ -48,6 +48,7 @@ class PostsControllerTest {
 
         mockMvc.perform(get("/posts/list"))
                 .andExpect(status().isOk())
+                .andExpect(model().attributeExists("orderBaseValues"))
                 .andExpect(view().name("list-posts"));
     }
 }

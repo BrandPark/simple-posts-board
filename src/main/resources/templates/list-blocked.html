@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragments.html::head"></head>
+
+<body class="bg-light d-flex flex-column align-items-center justify-content-center">
+<div th:replace="fragments.html::title"></div>
+<div class="jumbotron" style="width: 600px">
+    <div>
+        <h2 class="pb-4">차단 목록 (<span id="item-count"></span>)</h2>
+    </div>
+    <table class="table table-sm table-bordered">
+        <thead>
+            <tr>
+                <th scope="col" class="text-center" style="width:50px;">No.</th>
+                <th scope="col" class="text-center" style="width:200px" hidden>accountsId</th>
+                <th scope="col" class="text-center" style="width:200px">닉네임</th>
+                <th scope="col" class="text-center" style="width:150px">날짜</th>
+                <th scope="col" class="text-center"></th>
+            </tr>
+        </thead>
+        <tbody id="tbody">
+        </tbody>
+    </table>
+    <a class="btn btn-secondary" th:href="@{/}" role="button">홈으로</a>
+</div>
+</body>
+
+<div th:replace="fragments.html::bootstrap-js"></div>
+<script th:replace="fragments.html::ajax-csrf-header"></script>
+<script>
+    $(function () {
+        listBlocked.init();
+        listBlocked.loadBlockedAccounts();
+    });
+    let listBlocked = {
+        init: function () {
+            let _this = this;
+
+            $('#tbody').on('click', 'td.btn-unblock', function (e) {
+                let $row = $(e.target).closest("tr");
+                let toUnblockedAccountsId = parseInt($row.find("td.blocked-accounts-id").text());
+
+                _this.unblock(toUnblockedAccountsId);
+            });
+        },
+
+        unblock: function (toUnblockedAccountsId) {
+            if (toUnblockedAccountsId === NaN) {
+                alert("차단할 계정의 ID가 잘못되었습니다.");
+            }
+
+            $.ajax({
+                url: "/api/v1/accounts/" + toUnblockedAccountsId + "/unblock",
+                method: "post"
+            }).done(function () {
+                alert("차단이 해제되었습니다.");
+                window.location.href = "";
+            }).fail(function (e) {
+                alert("차단 해제에 실패했습니다.");
+            });
+        },
+
+        loadBlockedAccounts: function () {
+            let _this = this;
+
+            $.ajax({
+                url: "/api/v1/accounts/[[${loginAccounts.getId()}]]/blocks",
+                method: "get",
+            }).done(function (data) {
+                console.log(data);
+                _this._dataBatch(data);
+            }).fail(function (e) {
+                alert("글 목록을 조회하는데 실패했습니다.");
+            });
+        },
+
+        _dataBatch: function(data) {
+
+            $("#tbody").text("");
+
+            $("#item-count").text(data["itemCount"]);
+
+            let rows = this._createRows(data["itemList"]);
+            $("#tbody").append(rows);
+        },
+
+        _createRows: function(list) {
+
+            let rows = "";
+            for (let i = 0; i < list.length; i++) {
+                rows += "<tr>" + this._createCols(list[i]) + "</tr>";
+            }
+
+            return rows;
+        },
+
+        _createCols: function(row) {
+            let col = "";
+            col += "<td class='text-right blocks-id '>" + row["blocksId"] + "</td>";
+            col += "<td class='blocked-accounts-id' hidden>" + row["blockedAccountsId"] + "</td>";
+            col += "<td>" + row["blockedAccountsNickname"] + "</td>";
+            col += "<td class='text-right small'>" + row["createdDate"] + "</td>";
+            col += "<td class='btn-unblock small text-right d-flex justify-content-center align-items-center'><button class='btn-unblock btn-sm btn-danger'>차단 해제</button></td>";
+
+            return col;
+        }
+    }
+
+</script>
+</html>

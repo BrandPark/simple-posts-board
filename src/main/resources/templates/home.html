@@ -18,7 +18,7 @@
                 <form th:action="@{/logout}" method="post">
                     <button class="btn btn-lg btn-secondary w-100" type="submit">로그아웃</button>
                 </form>
-                <a class="btn btn-lg btn-danger" th:href="@{#}" role="button">차단 목록</a>
+                <a class="btn btn-lg btn-danger" th:href="@{'/accounts/' + ${account.getId()} + '/blocks'}" role="button">차단 목록</a>
                 <a class="btn btn-lg btn-success" th:href="@{/posts/create}" role="button">글 쓰기</a>
                 <a class="btn btn-lg btn-info" th:href="@{/posts/list}" role="button">전체 글</a>
             </div>

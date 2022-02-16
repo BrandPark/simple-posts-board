@@ -26,11 +26,16 @@ public class BlocksService {
         Accounts to = accountRepository.findById(toAccountsId)
                 .orElseThrow(() -> new IllegalStateException("차단한 사용자의 계정이 존재하지 않습니다."));
 
+        if (from == to) {
+            throw new IllegalArgumentException("자신의 계정은 차단할 수 없습니다.");
+        }
 
         Optional<Blocks> findBlocks = blocksRepository.findByFromAccountsIdAndToAccountsId(from.getId(), to.getId());
 
         if (findBlocks.isPresent()) {
             findBlocks.get().updateState(BlockState.BLOCKED);
+
+            return findBlocks.get().getId();
         }
 
         return blocksRepository.save(Blocks.createBlockRelation(from, to)).getId();
