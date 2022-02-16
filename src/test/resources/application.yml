@@ -6,3 +6,5 @@ logging:
   level:
     org.springframework.jdbc.core: debug
     org.hibernate.SQL: debug
+
+jwt.secret: simpleboardsecret
