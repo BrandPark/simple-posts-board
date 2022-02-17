@@ -6,17 +6,18 @@ Spring Data JPA와 Spring Boot를 사용하여 간단한 게시판 기능을 구
 
 ![image](https://user-images.githubusercontent.com/53790137/154380004-4727f431-6f8c-4e58-a193-75bc4fee8445.png)
 
-## API 문서
+## API Docs
 
-### Authenticate(인증 토큰)
+### Auth(인증)
 
 **CreateAuthenticationToken**
 ---
+
   토큰을 발급합니다.
 
 * **URL**
 
-  /authenticate
+  `/authenticate`
 
 * **Method:**
 
@@ -24,12 +25,12 @@ Spring Data JPA와 Spring Boot를 사용하여 간단한 게시판 기능을 구
   
 * **Payload**
 
-```
-    {
-        "username": "admin",
-        "password": "1q2w3e4r"
-    }
-```
+  ```
+      {
+          "username": "admin",
+          "password": "1q2w3e4r"
+      }
+  ```
 
 * **Success Response:**
 
@@ -63,7 +64,7 @@ Spring Data JPA와 Spring Boot를 사용하여 간단한 게시판 기능을 구
 
 * **URL**
 
-  /api/v1/posts
+  `/api/v1/posts`
 
 * **Method:**
 
@@ -73,7 +74,7 @@ Spring Data JPA와 Spring Boot를 사용하여 간단한 게시판 기능을 구
 
    **Required:**
  
-   `orderBase[=String]` (DATE_DESC, VIEW_DESC)
+   `orderBase[=String]` ("DATE_DESC" or "VIEW_DESC")
 
 * **Success Response:**
 
@@ -84,39 +85,26 @@ Spring Data JPA와 Spring Boot를 사용하여 간단한 게시판 기능을 구
         "itemCount": 0,
         "itemList": [
             {
-            "content": "string",
-            "createdDate": "yyyy-MM-dd HH:mm:ss",
-            "modifiedDate": "yyyy-MM-dd HH:mm:ss",
-            "postsId": 0,
-            "title": "string",
-            "viewCount": 0,
-            "writerId": 0,
-            "writerNickname": "string"
+              "content": "string",
+              "createdDate": "yyyy-MM-dd HH:mm:ss",
+              "modifiedDate": "yyyy-MM-dd HH:mm:ss",
+              "postsId": 0,
+              "title": "string",
+              "viewCount": 0,
+              "writerId": 0,
+              "writerNickname": "string"
             }
         ]
-    }
-  ```
-    
- 
-* **Error Response:**
-
-  * **Code:** 401 UNAUTHORIZED <br />
-  * **Content:** </br>
-  ```
-    {
-        "statusCode": 401,
-        "statusName": "UNAUTHORIZED",
-        "message": "인증에 실패했습니다."
     }
   ```
 
 **GetPosts**
 ---
-  한 사용자의 게시글을 가져옵니다.
+  한 사용자의 게시글을 가져옵니다. 가져온 게시글의 viewCount(조회수)는 1 증가합니다.
 
 * **URL**
 
-  /api/v1/posts/:postsId
+  `/api/v1/posts/{:postsId}`
 
 * **Method:**
 
@@ -138,19 +126,6 @@ Spring Data JPA와 Spring Boot를 사용하여 간단한 게시판 기능을 구
         "writerNickname": "string"
     }
   ```
-    
- 
-* **Error Response:**
-
-  * **Code:** 401 UNAUTHORIZED <br />
-  * **Content:** </br>
-  ```
-    {
-        "statusCode": 401,
-        "statusName": "UNAUTHORIZED",
-        "message": "인증에 실패했습니다."
-    }
-  ```
 
 **RegisterPosts**
 ---
@@ -158,7 +133,7 @@ Spring Data JPA와 Spring Boot를 사용하여 간단한 게시판 기능을 구
 
 * **URL**
 
-  /api/v1/posts
+  `/api/v1/posts`
 
 * **Method:**
 
@@ -207,7 +182,7 @@ Spring Data JPA와 Spring Boot를 사용하여 간단한 게시판 기능을 구
 
 * **URL**
 
-  /api/v1/posts/:postsId/comments
+  `/api/v1/posts/{:postsId}/comments`
 
 * **Method:**
 
@@ -232,18 +207,6 @@ Spring Data JPA와 Spring Boot를 사용하여 간단한 게시판 기능을 구
         ]
     }
   ```
- 
-* **Error Response:**
-
-  * **Code:** 401 UNAUTHORIZED <br />
-  * **Content:** </br>
-  ```
-    {
-        "statusCode": 401,
-        "statusName": "UNAUTHORIZED",
-        "message": "인증에 실패했습니다."
-    }
-  ```
 
 **RegisterComments**
 ---
@@ -251,7 +214,7 @@ Spring Data JPA와 Spring Boot를 사용하여 간단한 게시판 기능을 구
 
 * **URL**
 
-  /api/v1/posts/:postsId/comments
+  `/api/v1/posts/{:postsId}/comments`
 
 * **Method:**
 
@@ -300,7 +263,7 @@ Spring Data JPA와 Spring Boot를 사용하여 간단한 게시판 기능을 구
 
 * **URL**
 
-  /api/v1/accounts/:accountsId/blocks
+  `/api/v1/accounts/{:accountsId}/blocks`
 
 * **Method:**
 
@@ -349,7 +312,7 @@ Spring Data JPA와 Spring Boot를 사용하여 간단한 게시판 기능을 구
 
 * **URL**
 
-  /api/v1/accounts/:toBlockAccountsId/block
+  `/api/v1/accounts/{:toBlockAccountsId}/block`
 
 * **Method:**
 
@@ -385,7 +348,7 @@ Spring Data JPA와 Spring Boot를 사용하여 간단한 게시판 기능을 구
 
 * **URL**
 
-  /api/v1/accounts/:toUnblockAccountsId/unblock
+  `/api/v1/accounts/{:toUnblockAccountsId}/unblock`
 
 * **Method:**
 
