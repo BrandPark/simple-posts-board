@@ -10,6 +10,7 @@ import com.brandpark.simplepostsboard.modules.commnets.CommentsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -35,7 +36,7 @@ public class CommentsApiController {
     }
 
     @PostMapping
-    public Long registerComments(@LoginAccounts SessionAccounts accounts, @PathVariable Long postsId, @RequestBody CommentsSaveRequest reqData) {
+    public Long registerComments(@LoginAccounts SessionAccounts accounts, @PathVariable Long postsId, @Valid @RequestBody CommentsSaveRequest reqData) {
         return commentsService.registerComments(accounts, postsId, reqData);
     }
 }
