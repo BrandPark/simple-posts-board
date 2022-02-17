@@ -16,7 +16,29 @@ let mainJs = {
                 window.location.href = redirectUrl;
             }
         }).fail(function (e) {
-            alert("차단하는데 실패했습니다.");
+            mainJs.alertErrorMessage(e, "차단하는데 실패했습니다.");
         });
     },
+
+    alertErrorMessage: function (error, defaultMessage) {
+        let statusCode = error['status'];
+        if (statusCode == 401) {
+            alert("다시 로그인 해주세요.");
+            window.location.href = "/login";
+
+            return;
+        }
+
+        if (error["responseJSON"] != "undefined") {
+            alert(defaultMessage + "\n" + error["responseJSON"]["message"]);
+            return;
+        }
+
+        if (defaultMessage == null) {
+            alert("요청에 실패했습니다.");
+            return;
+        }
+
+        alert(defaultMessage);
+    }
 }

@@ -1,7 +1,7 @@
-package com.brandpark.simplepostsboard.infra.auth;
+package com.brandpark.simplepostsboard.infra.auth.jwt;
 
-import com.brandpark.simplepostsboard.infra.auth.dto.JwtRequest;
-import com.brandpark.simplepostsboard.infra.auth.dto.JwtResponse;
+import com.brandpark.simplepostsboard.infra.auth.jwt.dto.JwtRequest;
+import com.brandpark.simplepostsboard.infra.auth.jwt.dto.JwtResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

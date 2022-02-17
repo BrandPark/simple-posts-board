@@ -86,7 +86,7 @@
                 alert("차단되었습니다");
                 window.location.href = "";
             }).fail(function (e) {
-                alert("차단하는데 실패했습니다.");
+                mainJs.alertErrorMessage(e, "차단하는데 실패했습니다.");
             });
         },
 
@@ -108,7 +108,7 @@
             }).done(function (data) {
                 _this._dataBatch(data);
             }).fail(function (e) {
-                alert("글 목록을 조회하는데 실패했습니다.");
+                mainJs.alertErrorMessage(e, "글 목록을 조회하는데 실패했습니다.");
             });
         },
 

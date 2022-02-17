@@ -2,7 +2,7 @@ package com.brandpark.simplepostsboard.infra.auth;
 
 import com.brandpark.simplepostsboard.AccountFactory;
 import com.brandpark.simplepostsboard.MockMvcTest;
-import com.brandpark.simplepostsboard.infra.auth.dto.JwtRequest;
+import com.brandpark.simplepostsboard.infra.auth.jwt.dto.JwtRequest;
 import com.brandpark.simplepostsboard.modules.accounts.AccountRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;

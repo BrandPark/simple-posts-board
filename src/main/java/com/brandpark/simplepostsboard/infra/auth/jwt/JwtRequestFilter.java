@@ -1,4 +1,4 @@
-package com.brandpark.simplepostsboard.infra.auth;
+package com.brandpark.simplepostsboard.infra.auth.jwt;
 
 import com.brandpark.simplepostsboard.modules.accounts.CustomUser;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -16,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final UserDetailsService userDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
+    private final List<String> excludeUrls = List.of("/authenticate");
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -80,6 +82,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return excludeUrls.stream().anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
     }
 
     private boolean isAuthenticatedWithSessionId(String requestTokenHeader) {

@@ -43,6 +43,7 @@ public class BlocksService {
 
     @Transactional
     public Long createUnblockRelation(SessionAccounts loginAccounts, Long toAccountsId) {
+
         Accounts from = accountRepository.findById(loginAccounts.getId())
                 .orElseThrow(() -> new IllegalStateException("사용자의 계정이 올바르지 않습니다."));
 

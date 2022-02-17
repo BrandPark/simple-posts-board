@@ -1,4 +1,4 @@
-package com.brandpark.simplepostsboard.infra.auth;
+package com.brandpark.simplepostsboard.infra.auth.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

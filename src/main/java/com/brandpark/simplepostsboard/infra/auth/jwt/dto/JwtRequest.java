@@ -1,4 +1,4 @@
-package com.brandpark.simplepostsboard.infra.auth.dto;
+package com.brandpark.simplepostsboard.infra.auth.jwt.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
