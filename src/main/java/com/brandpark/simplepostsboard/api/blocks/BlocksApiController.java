@@ -33,7 +33,11 @@ public class BlocksApiController {
     }
 
     @GetMapping("/accounts/{accountsId}/blocks")
-    public BlockedAccountsListResponse getAllBlockedAccountsList(@LoginAccounts SessionAccounts loginAccounts) {
+    public BlockedAccountsListResponse getAllBlockedAccountsList(@PathVariable Long accountsId, @LoginAccounts SessionAccounts loginAccounts) {
+
+        if (!accountsId.equals(loginAccounts.getId())) {
+            throw new IllegalStateException("권한이 없습니다.");
+        }
 
         List<Blocks> allBlockRelation = blocksRepository.findAllByFromAccountsIdAndBlockState(loginAccounts.getId(), BlockState.BLOCKED);
 
