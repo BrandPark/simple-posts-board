@@ -21,9 +21,11 @@ public class CustomCommentsRepositoryImpl implements CustomCommentsRepository {
                         "JOIN FETCH c.accounts " +
                         "WHERE NOT EXISTS(" +
                             "SELECT b FROM Blocks b " +
-                            "WHERE c.accounts.id = b.toAccounts.id " +
-                            "AND b.blockState = 'BLOCKED' " +
-                            "AND b.fromAccounts.id = :loginAccountsId" +
+                            "WHERE b.blockState = 'BLOCKED' " +
+                            "AND (" +
+                                "(c.accounts.id = b.toAccounts.id AND b.fromAccounts.id = :loginAccountsId) " +
+                                "OR (c.accounts.id = b.fromAccounts.id AND b.toAccounts.id = :loginAccountsId)" +
+                            ")" +
                         ") " +
                         "AND c.posts.id = :postsId", Comments.class)
                 .setParameter("loginAccountsId", loginAccountsId)

@@ -16,6 +16,9 @@ public interface PostsRepository extends JpaRepository<Posts, Long>, CustomPosts
     @Override
     List<Posts> findAllOrderedPostsWithAccounts(OrderBase orderBase);
 
+    @Override
+    List<Posts> findAllOrderedPostsWithAccountsExcludeBlockedPosts(Long loginAccountsId, OrderBase orderBase);
+
     @Query("SELECT p " +
             "FROM Posts p JOIN FETCH p.accounts WHERE p.id = :postsId")
     Optional<Posts> findPostsWithAccountById(@Param("postsId") Long postsId);

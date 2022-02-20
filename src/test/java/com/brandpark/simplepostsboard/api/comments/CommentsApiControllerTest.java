@@ -73,7 +73,7 @@ class CommentsApiControllerTest {
     }
 
     @WithUserDetails(value = "user", setupBefore = TestExecutionEvent.TEST_EXECUTION)
-    @DisplayName("차단한 사람을 제외하고 게시글에 등록된 모든 댓글들 조회하기 - 성공(로그인한 경우)")
+    @DisplayName("차단된 댓글을 제외하고 게시글에 등록된 모든 댓글들 조회하기 - 성공(로그인한 경우)")
     @Test
     public void FindAllComments_ExcludeBlocked_Success_When_Authenticated() throws Exception {
 
@@ -85,9 +85,13 @@ class CommentsApiControllerTest {
         int notBlockedCommentsCount = 10;
         commentsFactory.createAndPersistCommentsList("댓글", commentsWriter, posts, notBlockedCommentsCount);
 
-        Accounts blockedAccounts = accountFactory.createAndPersistAccount("차단 당한 사람", "1q2w3e4r");
-        commentsFactory.createAndPersistComments("차단한 사람의 댓글", blockedAccounts, posts);
-        blocksFactory.createAndPersistRelation(loginAccounts, blockedAccounts, BlockState.BLOCKED);
+        Accounts blockedByMe = accountFactory.createAndPersistAccount("내가 차단한 사람", "1q2w3e4r");
+        commentsFactory.createAndPersistComments("내가 차단한 사람의 댓글", blockedByMe, posts);
+        blocksFactory.createAndPersistRelation(loginAccounts, blockedByMe, BlockState.BLOCKED);
+
+        Accounts blockedMe = accountFactory.createAndPersistAccount("나를 차단한 사람", "1q2w3e4r");
+        commentsFactory.createAndPersistComments("나를 차단한 사람의 댓글", blockedMe, posts);
+        blocksFactory.createAndPersistRelation(blockedMe, loginAccounts, BlockState.BLOCKED);
 
         // when, then
         mockMvc.perform(get("/api/v1/posts/" + posts.getId() + "/comments"))

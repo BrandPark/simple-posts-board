@@ -25,7 +25,7 @@ public class CustomPostsRepositoryImpl implements CustomPostsRepository {
     }
 
     @Override
-    public List<Posts> findAllOrderedPostsWithAccountsExcludeBlockedAccountsPosts(Long loginAccountsId, OrderBase orderBase) {
+    public List<Posts> findAllOrderedPostsWithAccountsExcludeBlockedPosts(Long loginAccountsId, OrderBase orderBase) {
 
         String orderQuery = String.format("ORDER BY p.%s %s", orderBase.getValue(), orderBase.getDir());
 
@@ -34,10 +34,12 @@ public class CustomPostsRepositoryImpl implements CustomPostsRepository {
                         "JOIN FETCH p.accounts " +
                         "WHERE NOT EXISTS(" +
                             "SELECT b FROM Blocks b " +
-                            "WHERE b.fromAccounts.id = :loginAccountsId " +
-                            "AND b.blockState = 'BLOCKED' " +
-                            "AND p.accounts.id = b.toAccounts.id" +
-                        ")" +
+                            "WHERE b.blockState = 'BLOCKED' " +
+                            "AND (" +
+                                "(b.fromAccounts.id = :loginAccountsId AND p.accounts.id = b.toAccounts.id) " +
+                                "OR (b.toAccounts.id = :loginAccountsId AND p.accounts.id = b.fromAccounts.id)" +
+                            ")" +
+                        ") " +
                         orderQuery, Posts.class)
                 .setParameter("loginAccountsId", loginAccountsId)
                 .getResultList();

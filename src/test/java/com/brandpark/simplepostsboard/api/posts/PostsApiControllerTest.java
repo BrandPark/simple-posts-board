@@ -164,9 +164,13 @@ class PostsApiControllerTest {
 
         List<Posts> notBlockedPosts = postsFactory.createAndPersistPostsList("제목", "내용", writer, 10);
 
-        Accounts blockedWriter = accountFactory.createAndPersistAccount("차단할 사용자", "1q2w3e4r");
-        postsFactory.createAndPersistPosts("차단한 사용자의 게시글", "내용", blockedWriter);
-        blocksFactory.createAndPersistRelation(loginUser, blockedWriter, BlockState.BLOCKED);
+        Accounts blockedByMe = accountFactory.createAndPersistAccount("내가 차단한 사용자", "1q2w3e4r");
+        postsFactory.createAndPersistPosts("차단한 사용자의 게시글", "내용", blockedByMe);
+        blocksFactory.createAndPersistRelation(loginUser, blockedByMe, BlockState.BLOCKED);
+
+        Accounts blockedMe = accountFactory.createAndPersistAccount("나를 차단한 사용자", "1q2w3e4r");
+        postsFactory.createAndPersistPosts("나를 차단한 사용자의 게시글", "내용", blockedMe);
+        blocksFactory.createAndPersistRelation(blockedMe, loginUser, BlockState.BLOCKED);
 
         // when, then
         mockMvc.perform(get("/api/v1/posts")
@@ -203,9 +207,13 @@ class PostsApiControllerTest {
             postsFactory.createAndPersistPosts("제목" + i, "내용" + i, writer, viewCount);
         }
 
-        Accounts blockedWriter = accountFactory.createAndPersistAccount("차단할 사용자", "1q2w3e4r");
-        postsFactory.createAndPersistPosts("차단한 사용자의 게시글", "내용", blockedWriter);
-        blocksFactory.createAndPersistRelation(loginUser, blockedWriter, BlockState.BLOCKED);
+        Accounts blockedByMe = accountFactory.createAndPersistAccount("내가 차단한 사용자", "1q2w3e4r");
+        postsFactory.createAndPersistPosts("내가 차단한 사용자의 게시글", "내용", blockedByMe);
+        blocksFactory.createAndPersistRelation(loginUser, blockedByMe, BlockState.BLOCKED);
+
+        Accounts blockedMe = accountFactory.createAndPersistAccount("나를 차단한 사용자", "1q2w3e4r");
+        postsFactory.createAndPersistPosts("나를 차단한 사용자의 게시글", "내용", blockedMe);
+        blocksFactory.createAndPersistRelation(blockedMe, loginUser, BlockState.BLOCKED);
 
         // when
         mockMvc.perform(get("/api/v1/posts")

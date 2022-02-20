@@ -41,7 +41,7 @@ public class PostsApiController {
         if (loginAccounts == null) {
             allPosts = postsRepository.findAllOrderedPostsWithAccounts(orderBase);
         } else {
-            allPosts = postsRepository.findAllOrderedPostsWithAccountsExcludeBlockedAccountsPosts(loginAccounts.getId(), orderBase);
+            allPosts = postsRepository.findAllOrderedPostsWithAccountsExcludeBlockedPosts(loginAccounts.getId(), orderBase);
         }
 
         return new PostsListResponse(allPosts);
