@@ -1,12 +1,89 @@
 # Simple Posts Board
 
-Spring Data JPA와 Spring Boot를 사용하여 간단한 게시판 기능을 구현하였습니다.
+Spring Data JPA와 Spring Boot를 사용하여 간단한 게시판을 만들었습니다.
+
+Spring MVC 구조로 페이지를 렌더링 해서 보내줍니다.
+
+기능들은 모두 API로 구현하여 클라이언트(브라우저)의 요청을 받아 수행합니다.
+
+## 기능
+1. 게시글 올리기
+2. 게시글 조회하기
+3. 게시글을 조회하면 조회수 증가시키기
+4. 모든 게시글 목록 조회하기
+5. 사용자 차단하기
+6. 차단 목록 조회하기
+7. 사용자 차단 
+8. 댓글 달기
+9. 게시글의 모든 댓글 조회하기
+
+## 요구 사항
+1. 사용자는 커뮤니티에 글을 올릴 때 (제목, 내용)은 필수로 올린다.
+2. 사용자는 댓글을 여러개 달 수 있다.
+3. 사용자는 다른 사용자를 차단할 수 있다.
+4. 내가 차단한 사용자의 글은 볼 수 없다. 
+5. 나를 차단한 사용자의 글도 볼 수 없다.
+6. 내가 차단한 사용자의 댓글을 볼 수 없다. 
+7. 나를 차단한 사용자의 댓글도 볼 수 없다. 
+8. 사용자가 글의 전체보기를 요청할 때 날짜순과 조회수 순으로 정렬할 수 있어야 한다.
+9. 글을 보면 조회수가 증가해야한다.
 
 ## ERD
 
 ![image](https://user-images.githubusercontent.com/53790137/154380004-4727f431-6f8c-4e58-a193-75bc4fee8445.png)
 
-## API Docs
+- 인덱스는 읽기 작업이 훨씬 많을 것으로 예상되는 `Blocks` 테이블만 생성했습니다. 
+- `Blocks` 테이블 컬럼 중 `BlockState`는 `BLOCKED`와 `NOT_BLOCKED`가 있습니다.
+
+## 화면 캡쳐
+
+### 1. 메인화면
+
+> 로그인 전 화면입니다.
+
+<img src="https://user-images.githubusercontent.com/53790137/154879886-aebea550-a099-4eed-ace0-63130e284313.png" width=800 height=500>
+
+> 로그인 후 화면입니다.
+
+<img src="https://user-images.githubusercontent.com/53790137/154879938-fdd80276-ba7c-416b-bbfe-e4658bafaf59.png" width=800 height=500>
+
+### 2. 글 쓰기 페이지
+
+<img src="https://user-images.githubusercontent.com/53790137/154880007-93ca8b1a-eed9-4742-9ac8-c31edbc19035.png" width=700 height=500>
+
+### 3. 전체 글 목록 조회
+
+<img src="https://user-images.githubusercontent.com/53790137/154880650-6bda4a52-7a27-4c4e-b817-89dbb614f07f.png" width=800 height=500>
+
+### 4. 등록 된 글 세부 내용 조회
+
+> 세부 조회를 하면 조회수가 증가합니다.
+
+<img src="https://user-images.githubusercontent.com/53790137/154880760-2701f024-5dd9-4a97-900c-3e19457cfd90.png" width=700 height=500>
+
+### 5. 댓글 작성하기
+
+<img src="https://user-images.githubusercontent.com/53790137/154880940-383d849e-aea9-41ac-ba86-bad596202116.png" width=700 height=500>
+
+### 6. 사용자 차단하기
+
+> 자신의 계정이 아닐 경우에만 차단할 수 있습니다.
+
+<img src="https://user-images.githubusercontent.com/53790137/154881037-04bfc1a0-1182-42af-91d7-c3c9e15245e3.png" width=800 height=500>
+
+> 차단된 사람의 게시글과 댓글은 볼 수 없습니다.
+
+<img src="https://user-images.githubusercontent.com/53790137/154881092-9bafe2c3-bde5-4622-88a2-c1c2e2bdd0ff.png" width=800 height=500>
+
+### 7. 차단 목록 조회하기
+
+> 차단을 해제하면 게시글과 댓글을 다시 볼 수 있습니다.
+
+<img src="https://user-images.githubusercontent.com/53790137/154882600-47e3061f-0192-4f5d-b088-0a504b70f70f.png" width=800 height=500>
+
+---
+
+# API Docs
 
 ### Auth(인증)
 
